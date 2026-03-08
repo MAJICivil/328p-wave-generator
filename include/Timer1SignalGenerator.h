@@ -9,7 +9,7 @@
  */
 class Timer1SignalGenerator {
     DigitalWaveForm outputWaveForm = DigitalWaveForm::None;
-    float outputFrequency;
+    short x;
     
     public:
     static constexpr uint8_t OC1A_PIN = 9;
@@ -17,12 +17,13 @@ class Timer1SignalGenerator {
     
     void initialize();
 
-    /* Outputs a square wave with F = frequency */
+    /* Outputs a square wave with F_out = frequency */
     void outputSquareWave(float frequency);
     void stop();
-    
+
     inline DigitalWaveForm getOutputWaveForm() const { return outputWaveForm; };
 
     private:
+    inline uint16_t computeOCR1A(float frequency) const { return F_CPU / (2 * PRESCALER * frequency) - 1; };
 
 };
