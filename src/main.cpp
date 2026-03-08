@@ -9,7 +9,7 @@ void setup() {
 
   digitalSignalGen.initialize();
 
-  digitalSignalGen.outputSquareWave(10);
+  digitalSignalGen.outputSquareWave(100);
 }
 
 void loop() {
