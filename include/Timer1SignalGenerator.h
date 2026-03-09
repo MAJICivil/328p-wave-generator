@@ -19,9 +19,11 @@ class Timer1SignalGenerator {
 
     /* Outputs a square wave with F_out = frequency */
     void outputSquareWave(float frequency);
+    void outputPulseWave(float frequency, float dutycycle);
     void stop();
 
     inline DigitalWaveForm getOutputWaveForm() const { return outputWaveForm; };
+    inline float getOutputFrequency() const { return F_CPU / (2 * timer1Prescale * (1 + OCR1A)); };
 
     private:
     inline uint16_t computeOCR1A(float frequency) const { return F_CPU / (2 * timer1Prescale * frequency) - 1; };

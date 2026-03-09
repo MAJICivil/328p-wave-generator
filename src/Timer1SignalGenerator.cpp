@@ -23,6 +23,10 @@ void Timer1SignalGenerator::outputSquareWave(float frequency) {
     OCR1A = computeOCR1A(frequency); 
 }
 
+void Timer1SignalGenerator::outputPulseWave(float frequency, float dutycycle) {
+    // TODO
+}
+
 void Timer1SignalGenerator::stop() {
     TCCR1A = 0;
     TCCR1B = 0;
