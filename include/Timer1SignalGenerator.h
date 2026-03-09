@@ -10,7 +10,6 @@
 class Timer1SignalGenerator {
     DigitalWaveForm outputWaveForm = DigitalWaveForm::None;
     uint16_t timer1Prescale = 0;
-    short x;
     
     public:
     static constexpr uint8_t OC1A_PIN = 9;
@@ -28,5 +27,6 @@ class Timer1SignalGenerator {
     private:
     inline uint16_t computeOCR1A(float frequency) const { return F_CPU / (2 * timer1Prescale * frequency) - 1; };
     bool setPrescaler(uint16_t prescale);
+    inline void resetTimer1() { TCCR1A = 0; TCCR1B = 0; TCNT1 = 0; }
 
 };
