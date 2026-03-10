@@ -21,11 +21,18 @@ void Timer1SignalGenerator::outputSquareWave(float frequency) {
 }
 
 void Timer1SignalGenerator::outputPulseWave(float frequency, float dutycycle) {
+    if (dutycycle <= 0.0 || dutycycle > 1) return;
+
     stop();
 
-    outputWaveForm = DigitalWaveForm::Pulse;
+    // TODO: variable frequency
     
-    // TODO
+    outputWaveForm = DigitalWaveForm::Pulse;
+    TCCR1A |= ((1 << COM1A1) | (1 << WGM10));
+    TCCR1B |= (1 << WGM12);
+    OCR1A = 0xFF * dutycycle;
+    setPrescaler(256);
+    
 }
 
 void Timer1SignalGenerator::stop() {
