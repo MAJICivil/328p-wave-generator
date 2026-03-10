@@ -24,14 +24,13 @@ void Timer1SignalGenerator::outputPulseWave(float frequency, float dutycycle) {
     if (dutycycle <= 0.0 || dutycycle > 1) return;
 
     stop();
-
-    // TODO: variable frequency
     
     outputWaveForm = DigitalWaveForm::Pulse;
-    TCCR1A |= ((1 << COM1A1) | (1 << WGM10));
-    TCCR1B |= (1 << WGM12);
-    OCR1A = 0xFF * dutycycle;
-    setPrescaler(256);
+    TCCR1A |= ((1 << COM1A1) | (1 << WGM11));
+    TCCR1B |= ((1 << WGM12) | (1 << WGM13));
+    setPrescaler(64);
+    ICR1 = computeTOP(frequency);
+    OCR1A = (ICR1 + 1) * dutycycle - 1;
     
 }
 

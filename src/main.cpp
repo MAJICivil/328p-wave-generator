@@ -9,7 +9,8 @@ void setup() {
 
   digitalSignalGen.initialize();
 
-  digitalSignalGen.outputPulseWave(NAN, .2f);
+  digitalSignalGen.outputPulseWave(1000, .2f);
+  Serial.println(digitalSignalGen.getOutputDutycycle(), 4);
 }
 
 void loop() {
