@@ -11,8 +11,8 @@ void Timer1SignalGenerator::initialize() {
 
 void Timer1SignalGenerator::outputSquareWave(float frequency) {
     stop();
-
     outputWaveForm = DigitalWaveForm::Square;
+
     TCCR1A = (1 << COM1A0);
     TCCR1B = (1 << WGM12);
     setPrescaler(64);
@@ -24,8 +24,9 @@ void Timer1SignalGenerator::outputPulseWave(float frequency, float dutycycle) {
     if (dutycycle <= 0.0 || dutycycle > 1) return;
 
     stop();
-
     outputWaveForm = DigitalWaveForm::Pulse;
+
+
     TCCR1A |= ((1 << COM1A1) | (1 << WGM11));
     TCCR1B |= ((1 << WGM12) | (1 << WGM13));
     setPrescaler(64);
@@ -76,5 +77,13 @@ bool Timer1SignalGenerator::setPrescaler(uint16_t prescale) {
 
     timer1Prescale = prescale;
     return true;
+}
+
+uint16_t Timer1SignalGenerator::getPrescaleForFrequency(float frequency) {
+    if (outputWaveForm == DigitalWaveForm::Pulse) return 0;
+    if (frequency < SQUARE_LOWERBOUND_hz || frequency > SQUARE_UPPERBOUND_hz) return 0;
+
+    // TODO
+    return 0;
 }
 
