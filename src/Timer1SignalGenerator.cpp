@@ -46,7 +46,7 @@ void Timer1SignalGenerator::stop() {
     resetTimer1();
     timer1Prescale = 0;
     outputWaveForm = DigitalWaveForm::None;
-    FrequencyMode = FrequencyMode::Constant;
+    frequencyMode = FrequencyMode::Constant;
 }
 
 bool Timer1SignalGenerator::setPrescaler(uint16_t prescale) {
