@@ -12,3 +12,8 @@ enum class AnalogWaveForm {
     Triangle,
     Sine
 };
+
+enum class FrequencyMode {
+    Constant,
+    Chirp
+};

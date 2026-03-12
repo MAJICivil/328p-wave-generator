@@ -9,6 +9,7 @@
  */
 class Timer1SignalGenerator {
     DigitalWaveForm outputWaveForm = DigitalWaveForm::None;
+    FrequencyMode FrequencyMode = FrequencyMode::Constant;
     uint16_t timer1Prescale = 0;
     
     public:
@@ -22,6 +23,10 @@ class Timer1SignalGenerator {
     void outputSquareWave(float frequency);
     /* Outputs a pulse wave with F_out = frequency and d = dutycycle */
     void outputPulseWave(float frequency, float dutycycle);
+    /* Outputs a square wave frequency sweep from startFrequency to endFrequency over time */
+    void chirp(float startFrequency, float endFrequency, float time);
+    /* Must be called frequently when using time variable frequencies */
+    void tick();
     void stop();
 
     inline DigitalWaveForm getOutputWaveForm() const { return outputWaveForm; };

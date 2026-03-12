@@ -24,7 +24,7 @@ void Timer1SignalGenerator::outputPulseWave(float frequency, float dutycycle) {
     if (dutycycle <= 0.0 || dutycycle > 1) return;
 
     stop();
-    
+
     outputWaveForm = DigitalWaveForm::Pulse;
     TCCR1A |= ((1 << COM1A1) | (1 << WGM11));
     TCCR1B |= ((1 << WGM12) | (1 << WGM13));
@@ -34,10 +34,19 @@ void Timer1SignalGenerator::outputPulseWave(float frequency, float dutycycle) {
     
 }
 
+void Timer1SignalGenerator::chirp(float startFrequency, float endFrequency, float time) {
+    // TODO
+}
+
+void Timer1SignalGenerator::tick() {
+    // TODO
+}
+
 void Timer1SignalGenerator::stop() {
     resetTimer1();
     timer1Prescale = 0;
     outputWaveForm = DigitalWaveForm::None;
+    FrequencyMode = FrequencyMode::Constant;
 }
 
 bool Timer1SignalGenerator::setPrescaler(uint16_t prescale) {
