@@ -10,10 +10,11 @@ void setup() {
   digitalSignalGen.initialize();
 
   digitalSignalGen.outputSquareWave(25000);
+
   Serial.println(digitalSignalGen.getTimer1Prescale());
   Serial.println(digitalSignalGen.getOutputFrequency());
   Serial.println(digitalSignalGen.getOutputDutycycle());
-  Serial.println(OCR1A);
+
 }
 
 void loop() {

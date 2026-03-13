@@ -37,7 +37,14 @@ void Timer1SignalGenerator::outputPulseWave(float frequency, float dutycycle) {
 }
 
 void Timer1SignalGenerator::chirp(float startFrequency, float endFrequency, float time) {
-    // TODO
+    outputSquareWave(startFrequency);
+    if (outputWaveForm != DigitalWaveForm::Square) return;
+
+    chirpStartFrequency = startFrequency;
+    chirpEndFrequency = endFrequency;
+    chirpDuration = time;
+    chirpStartTime_us = micros();
+    frequencyMode = FrequencyMode::Chirp;
 }
 
 void Timer1SignalGenerator::tick() {

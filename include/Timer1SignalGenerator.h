@@ -11,6 +11,11 @@ class Timer1SignalGenerator {
     DigitalWaveForm outputWaveForm = DigitalWaveForm::None;
     FrequencyMode frequencyMode = FrequencyMode::Constant;
     uint16_t timer1Prescale = 0;
+
+    float chirpStartFrequency;
+    float chirpEndFrequency;
+    uint32_t chirpDuration;
+    uint32_t chirpStartTime_us;
     
     public:
     static constexpr uint8_t OC1A_PIN = 9;
@@ -20,6 +25,8 @@ class Timer1SignalGenerator {
     static constexpr float PULSE_LOWERBOUND_hz = 0.24;
     static constexpr uint32_t TOP_UPPERBOUND = (uint32_t)1 << 16;
     static constexpr uint8_t TOP_LOWERBOUND = 2;
+    static constexpr uint32_t CHIRP_UPDATE_INTERVAL_us = 50;
+
 
     
     void initialize();
@@ -28,7 +35,7 @@ class Timer1SignalGenerator {
     void outputSquareWave(float frequency);
     /* Outputs a pulse wave with F_out = frequency and d = dutycycle */
     void outputPulseWave(float frequency, float dutycycle);
-    /* Outputs a square wave frequency sweep from startFrequency to endFrequency over time */
+    /* Outputs a square wave frequency linear sweep from startFrequency to endFrequency over time */
     void chirp(float startFrequency, float endFrequency, float time);
     /* Must be called frequently when using time variable frequencies */
     void tick();
