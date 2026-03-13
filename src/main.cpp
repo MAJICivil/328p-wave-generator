@@ -2,7 +2,7 @@
 #include <Timer1SignalGenerator.h>
 #include <Waveform.h>
 
-Timer1SignalGenerator digitalSignalGen{};
+Timer1SignalGenerator digitalSignalGen{}; // Operates on OC1A (pin 9)
 
 unsigned long lastSend = 0;
 unsigned long sendInterval = 500;
@@ -13,10 +13,9 @@ void setup() {
   digitalSignalGen.initialize();
 
   //digitalSignalGen.outputSquareWave(1000000);
-  //digitalSignalGen.outputPulseWave(100000, .1);
+  //digitalSignalGen.outputPulseWave(8267, .1);
 
-  //delay(1000);
-  digitalSignalGen.chirp(1000, 100000, 15);
+  digitalSignalGen.chirp(500, 100000, 15);
 
 }
 

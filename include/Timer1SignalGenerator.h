@@ -2,8 +2,6 @@
 #include <Waveform.h>
 #pragma once
 
-
-
 /**
  * Models a signal generator that manipulates timer1 (OC1A) to create digital signals
  */
@@ -27,7 +25,6 @@ class Timer1SignalGenerator {
     static constexpr uint32_t TOP_UPPERBOUND = (uint32_t)1 << 16;
     static constexpr uint8_t TOP_LOWERBOUND = 2;
     static constexpr uint32_t CHIRP_UPDATE_INTERVAL_us = 50;
-
 
     
     void initialize();
