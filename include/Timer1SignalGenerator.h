@@ -36,8 +36,12 @@ class Timer1SignalGenerator {
 
     inline DigitalWaveForm getOutputWaveForm() const { return outputWaveForm; };
     inline FrequencyMode getFrequencyMode() const { return frequencyMode; };
-    inline float getOutputFrequency() const { return outputWaveForm == DigitalWaveForm::Square ? (float)F_CPU / ((uint32_t)2 * timer1Prescale * (1 + OCR1A)) : (float)F_CPU / ((uint32_t)timer1Prescale * (1 + ICR1)); };
-    inline float getOutputDutycycle() const { return outputWaveForm == DigitalWaveForm::Pulse ?  (OCR1A + 1) / (float)ICR1 : NAN; };
+    inline float getOutputFrequency() const { 
+        if (timer1Prescale == 0.0) return NAN;
+        return outputWaveForm == DigitalWaveForm::Square ? (float)F_CPU / ((uint32_t)2 * timer1Prescale * (1 + OCR1A)) : (float)F_CPU / ((uint32_t)timer1Prescale * (1 + ICR1)); };
+    inline float getOutputDutycycle() const { 
+        if (outputWaveForm == DigitalWaveForm::None) return NAN;
+        return outputWaveForm == DigitalWaveForm::Pulse ?  (OCR1A + 1) / (float)ICR1 : 0.5; };
     inline uint16_t getTimer1Prescale() const { return timer1Prescale; }
     
     private:

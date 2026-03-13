@@ -9,8 +9,7 @@ void setup() {
 
   digitalSignalGen.initialize();
 
-  digitalSignalGen.outputPulseWave(25000, .66);
-  Serial.println((int)digitalSignalGen.getOutputWaveForm());
+  digitalSignalGen.outputSquareWave(25000);
   Serial.println(digitalSignalGen.getTimer1Prescale());
   Serial.println(digitalSignalGen.getOutputFrequency());
   Serial.println(digitalSignalGen.getOutputDutycycle());
