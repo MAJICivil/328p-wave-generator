@@ -18,6 +18,9 @@ class Timer1SignalGenerator {
     static constexpr float SQUARE_LOWERBOUND_hz = 0.12;
     static constexpr uint32_t PULSE_UPPERBOUND_hz = 1000000;
     static constexpr float PULSE_LOWERBOUND_hz = 0.24;
+    static constexpr uint32_t TOP_UPPERBOUND = (uint32_t)1 << 16;
+    static constexpr uint8_t TOP_LOWERBOUND = 2;
+
     
     void initialize();
 
@@ -33,7 +36,7 @@ class Timer1SignalGenerator {
 
     inline DigitalWaveForm getOutputWaveForm() const { return outputWaveForm; };
     inline FrequencyMode getFrequencyMode() const { return frequencyMode; };
-    inline float getOutputFrequency() const { return F_CPU / (2 * timer1Prescale * (1 + OCR1A)); };
+    inline float getOutputFrequency() const { return outputWaveForm == DigitalWaveForm::Square ? (float)F_CPU / ((uint32_t)2 * timer1Prescale * (1 + OCR1A)) : (float)F_CPU / ((uint32_t)timer1Prescale * (1 + ICR1)); };
     inline float getOutputDutycycle() const { return outputWaveForm == DigitalWaveForm::Pulse ?  (OCR1A + 1) / (float)ICR1 : NAN; };
     inline uint16_t getTimer1Prescale() const { return timer1Prescale; }
     
@@ -41,8 +44,10 @@ class Timer1SignalGenerator {
 
     inline uint16_t computeOCR1A(float frequency) const { return F_CPU / (2 * timer1Prescale * frequency) - 1; };
     inline uint16_t computeTOP(float frequency) const { return F_CPU / (timer1Prescale * frequency) - 1; };
-    uint16_t getPrescaleForFrequency(float frequency);
+    uint16_t getPrescaleForFrequency(float frequency, DigitalWaveForm waveform);
     bool setPrescaler(uint16_t prescale);
     inline void resetTimer1() { TCCR1A = 0; TCCR1B = 0; TCNT1 = 0; }
-
+    inline float getFrequencyForPrescale(uint16_t prescale, uint32_t top, DigitalWaveForm waveform) const { 
+        float base = (float)F_CPU / (prescale * top);
+        return waveform == DigitalWaveForm::Pulse ? base : base / 2; };
 };

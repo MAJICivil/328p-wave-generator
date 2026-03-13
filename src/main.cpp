@@ -9,8 +9,12 @@ void setup() {
 
   digitalSignalGen.initialize();
 
-  digitalSignalGen.outputPulseWave(1000, .2f);
-  Serial.println(digitalSignalGen.getOutputDutycycle(), 4);
+  digitalSignalGen.outputPulseWave(25000, .66);
+  Serial.println((int)digitalSignalGen.getOutputWaveForm());
+  Serial.println(digitalSignalGen.getTimer1Prescale());
+  Serial.println(digitalSignalGen.getOutputFrequency());
+  Serial.println(digitalSignalGen.getOutputDutycycle());
+  Serial.println(OCR1A);
 }
 
 void loop() {
