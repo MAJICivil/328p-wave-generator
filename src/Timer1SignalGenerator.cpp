@@ -11,12 +11,22 @@ void Timer1SignalGenerator::initialize() {
 
 void Timer1SignalGenerator::outputSquareWave(float frequency) {
     stop();
-
     TCCR1A = (1 << COM1A0);
     TCCR1B = (1 << WGM12);
-
-    if (!setPrescaler(getPrescaleForFrequency(frequency, DigitalWaveForm::Square))) return;
     outputWaveForm = DigitalWaveForm::Square;
+
+    updateSquareWaveFrequency(frequency);
+}
+
+void Timer1SignalGenerator::updateSquareWaveFrequency(float frequency) {
+    if (outputWaveForm != DigitalWaveForm::Square) return;
+
+    uint16_t updatedPrescale = getPrescaleForFrequency(frequency, DigitalWaveForm::Square);
+    if (updatedPrescale == 0) { stop(); return; }
+    
+    if (timer1Prescale != updatedPrescale) {
+        if (!setPrescaler(updatedPrescale)) { stop(); return; } 
+    }
 
     OCR1A = computeOCR1A(frequency); 
 }
@@ -40,15 +50,33 @@ void Timer1SignalGenerator::chirp(float startFrequency, float endFrequency, floa
     outputSquareWave(startFrequency);
     if (outputWaveForm != DigitalWaveForm::Square) return;
 
+    uint32_t now = micros();
     chirpStartFrequency = startFrequency;
     chirpEndFrequency = endFrequency;
     chirpDuration = time;
-    chirpStartTime_us = micros();
+    chirpStartTime_us = now;
+    chirpLastUpdate_us = now;
     frequencyMode = FrequencyMode::Chirp;
 }
 
 void Timer1SignalGenerator::tick() {
-    // TODO
+    if (frequencyMode == FrequencyMode::Constant) return;
+
+    uint32_t now = micros();
+    if (now - chirpLastUpdate_us < CHIRP_UPDATE_INTERVAL_us) return;
+
+    float nextFrequency = (chirpEndFrequency - chirpStartFrequency) / (chirpDuration);
+    nextFrequency *= now - chirpStartTime_us;
+    nextFrequency /= US_PER_SECOND;
+    nextFrequency += chirpStartFrequency;
+    
+    updateSquareWaveFrequency(nextFrequency);
+    chirpLastUpdate_us = now;
+
+    if (now - chirpStartTime_us >= (chirpDuration * US_PER_SECOND)) {
+        frequencyMode = FrequencyMode::Constant;
+        stop();
+    }
 }
 
 void Timer1SignalGenerator::stop() {

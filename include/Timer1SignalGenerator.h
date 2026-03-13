@@ -16,6 +16,7 @@ class Timer1SignalGenerator {
     float chirpEndFrequency;
     uint32_t chirpDuration;
     uint32_t chirpStartTime_us;
+    uint32_t chirpLastUpdate_us;
     
     public:
     static constexpr uint8_t OC1A_PIN = 9;
@@ -35,7 +36,7 @@ class Timer1SignalGenerator {
     void outputSquareWave(float frequency);
     /* Outputs a pulse wave with F_out = frequency and d = dutycycle */
     void outputPulseWave(float frequency, float dutycycle);
-    /* Outputs a square wave frequency linear sweep from startFrequency to endFrequency over time */
+    /* Outputs a square wave frequency linear sweep from startFrequency to endFrequency over time in seconds */
     void chirp(float startFrequency, float endFrequency, float time);
     /* Must be called frequently when using time variable frequencies */
     void tick();
@@ -57,8 +58,9 @@ class Timer1SignalGenerator {
     inline uint16_t computeTOP(float frequency) const { return F_CPU / (timer1Prescale * frequency) - 1; };
     uint16_t getPrescaleForFrequency(float frequency, DigitalWaveForm waveform);
     bool setPrescaler(uint16_t prescale);
-    inline void resetTimer1() { TCCR1A = 0; TCCR1B = 0; TCNT1 = 0; }
+    inline void resetTimer1() { TCCR1A = 0; TCCR1B = 0; TCNT1 = 0; OCR1A = 0; ICR1 = 0; }
     inline float getFrequencyForPrescale(uint16_t prescale, uint32_t top, DigitalWaveForm waveform) const { 
         float base = (float)F_CPU / (prescale * top);
         return waveform == DigitalWaveForm::Pulse ? base : base / 2; };
+    void updateSquareWaveFrequency(float frequency);
 };

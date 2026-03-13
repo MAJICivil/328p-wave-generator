@@ -17,3 +17,5 @@ enum class FrequencyMode {
     Constant,
     Chirp
 };
+
+constexpr uint32_t US_PER_SECOND = 1000000;
