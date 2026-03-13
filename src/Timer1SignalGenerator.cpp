@@ -20,13 +20,7 @@ void Timer1SignalGenerator::outputSquareWave(float frequency) {
 
 void Timer1SignalGenerator::updateSquareWaveFrequency(float frequency) {
     if (outputWaveForm != DigitalWaveForm::Square) return;
-
-    uint16_t updatedPrescale = getPrescaleForFrequency(frequency, DigitalWaveForm::Square);
-    if (updatedPrescale == 0) { stop(); return; }
-    
-    if (timer1Prescale != updatedPrescale) {
-        if (!setPrescaler(updatedPrescale)) { stop(); return; } 
-    }
+    if (!checkAndSetPrescalerForFrequency(frequency, DigitalWaveForm::Square)) return;
 
     OCR1A = computeOCR1A(frequency); 
 }
@@ -37,13 +31,12 @@ void Timer1SignalGenerator::outputPulseWave(float frequency, float dutycycle) {
 
     TCCR1A |= ((1 << COM1A1) | (1 << WGM11));
     TCCR1B |= ((1 << WGM12) | (1 << WGM13));
-    
-    if (!setPrescaler(getPrescaleForFrequency(frequency, DigitalWaveForm::Pulse))) return;
     outputWaveForm = DigitalWaveForm::Pulse;
 
+    if (!checkAndSetPrescalerForFrequency(frequency, DigitalWaveForm::Pulse)) return;
 
     ICR1 = computeTOP(frequency);
-    OCR1A = (ICR1 + 1) * dutycycle - 1;
+    OCR1A = round((ICR1 + 1) * dutycycle - 1);
 }
 
 void Timer1SignalGenerator::chirp(float startFrequency, float endFrequency, float time) {
@@ -116,7 +109,31 @@ bool Timer1SignalGenerator::setPrescaler(uint16_t prescale) {
     return true;
 }
 
+bool Timer1SignalGenerator::checkAndSetPrescalerForFrequency(float frequency, DigitalWaveForm waveform) {
+    uint16_t updatedPrescale = getPrescaleForFrequency(frequency, waveform);
+    if (updatedPrescale == 0) { 
+        Serial.print("Invalid Frequency: ");
+        Serial.print(frequency, 2); 
+        Serial.print(" for waveform: ");
+        Serial.println(toString(waveform));
+        stop(); 
+        return false; 
+    }
+
+    if (timer1Prescale != updatedPrescale) {
+        if (!setPrescaler(updatedPrescale)) { 
+            Serial.print("Failed to set prescale to ");
+            Serial.println(updatedPrescale);
+            stop(); 
+            return false; 
+        } 
+    }
+
+    return true;
+}
+
 uint16_t Timer1SignalGenerator::getPrescaleForFrequency(float frequency, DigitalWaveForm waveForm) {
+    if (waveForm == DigitalWaveForm::None) return 0;
     if (waveForm == DigitalWaveForm::Square && (frequency < SQUARE_LOWERBOUND_hz || frequency > SQUARE_UPPERBOUND_hz)) return 0;
     if (waveForm == DigitalWaveForm::Pulse && (frequency < PULSE_LOWERBOUND_hz || frequency > PULSE_UPPERBOUND_hz)) return 0;
 

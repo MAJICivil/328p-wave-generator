@@ -54,10 +54,11 @@ class Timer1SignalGenerator {
     
     private:
 
-    inline uint16_t computeOCR1A(float frequency) const { return F_CPU / (2 * timer1Prescale * frequency) - 1; };
-    inline uint16_t computeTOP(float frequency) const { return F_CPU / (timer1Prescale * frequency) - 1; };
+    inline uint16_t computeOCR1A(float frequency) const { return round(F_CPU / (2 * timer1Prescale * frequency) - 1); };
+    inline uint16_t computeTOP(float frequency) const { return round(F_CPU / (timer1Prescale * frequency) - 1); };
     uint16_t getPrescaleForFrequency(float frequency, DigitalWaveForm waveform);
     bool setPrescaler(uint16_t prescale);
+    bool checkAndSetPrescalerForFrequency(float frequency, DigitalWaveForm waveform);
     inline void resetTimer1() { TCCR1A = 0; TCCR1B = 0; TCNT1 = 0; OCR1A = 0; ICR1 = 0; }
     inline float getFrequencyForPrescale(uint16_t prescale, uint32_t top, DigitalWaveForm waveform) const { 
         float base = (float)F_CPU / (prescale * top);

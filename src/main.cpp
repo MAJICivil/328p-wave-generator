@@ -12,14 +12,11 @@ void setup() {
 
   digitalSignalGen.initialize();
 
-  // digitalSignalGen.outputSquareWave(25000);
+  //digitalSignalGen.outputSquareWave(1000000);
+  //digitalSignalGen.outputPulseWave(100000, .1);
 
-  // Serial.println(digitalSignalGen.getTimer1Prescale());
-  // Serial.println(digitalSignalGen.getOutputFrequency());
-  // Serial.println(digitalSignalGen.getOutputDutycycle());
-  delay(1000);
-
-  digitalSignalGen.chirp(25000, 100000, 30);
+  //delay(1000);
+  digitalSignalGen.chirp(1000, 100000, 15);
 
 }
 
@@ -28,8 +25,8 @@ void loop() {
 
   if (millis() - lastSend >= sendInterval) {
     Serial.println(digitalSignalGen.getOutputFrequency());
-    Serial.println((int)digitalSignalGen.getOutputWaveForm());
-    Serial.println((int)digitalSignalGen.getFrequencyMode());
+    Serial.println(digitalSignalGen.getOutputDutycycle());
+    Serial.println(toString(digitalSignalGen.getOutputWaveForm()));
     lastSend = millis();
   }
 }
