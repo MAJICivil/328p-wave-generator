@@ -34,7 +34,9 @@ class Timer1SignalGenerator {
     /* Outputs a pulse wave with F_out = frequency and d = dutycycle */
     void outputPulseWave(float frequency, float dutycycle);
     /* Outputs a square wave frequency linear sweep from startFrequency to endFrequency over time in seconds */
-    void chirp(float startFrequency, float endFrequency, float time);
+    void linearChirp(float startFrequency, float endFrequency, float time);
+    /* Outputs a square wave frequency log sweep (f(t) = f0 * e^(ln(f1/f0) * t * 1/T)) from startFrequency to endFrequency over time in seconds */
+    void logChirp(float startFrequency, float endFrequency, float time);
     /* Must be called frequently when using time variable frequencies */
     void tick();
     void stop();
