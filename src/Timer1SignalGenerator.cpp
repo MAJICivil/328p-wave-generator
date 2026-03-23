@@ -39,41 +39,55 @@ void Timer1SignalGenerator::outputPulseWave(float frequency, float dutycycle) {
     OCR1A = round((ICR1 + 1) * dutycycle - 1);
 }
 
-void Timer1SignalGenerator::linearChirp(float startFrequency, float endFrequency, float time) {
+void Timer1SignalGenerator::linearSweep(float startFrequency, float endFrequency, float time) {
+    setupSweep(startFrequency, endFrequency, time);
+    frequencyMode = FrequencyMode::LinearSweep;
+}
+
+void Timer1SignalGenerator::logSweep(float startFrequency, float endFrequency, float time) {
+    setupSweep(startFrequency, endFrequency, time);
+    frequencyMode = FrequencyMode::LogSweep;
+}
+
+void Timer1SignalGenerator::setupSweep(float startFrequency, float endFrequency, float duration) {
     outputSquareWave(startFrequency);
     if (outputWaveForm != DigitalWaveForm::Square) return;
 
     uint32_t now = micros();
-    chirpStartFrequency = startFrequency;
-    chirpEndFrequency = endFrequency;
-    chirpDuration = time;
-    chirpStartTime_us = now;
-    chirpLastUpdate_us = now;
-    frequencyMode = FrequencyMode::LinearChirp;
-}
-
-void Timer1SignalGenerator::logChirp(float startFrequency, float endFrequency, float time) {
-    //TODO
+    sweepStartFrequency = startFrequency;
+    sweepEndFrequency = endFrequency;
+    sweepDuration = duration;
+    sweepStartTime_us = now;
+    sweepLastUpdate_us = now;
 }
 
 void Timer1SignalGenerator::tick() {
     if (frequencyMode == FrequencyMode::Constant) return;
 
     uint32_t now = micros();
-    if (now - chirpLastUpdate_us < CHIRP_UPDATE_INTERVAL_us) return;
+    if (now - sweepLastUpdate_us < SWEEP_UPDATE_INTERVAL_us) return;
 
-    float nextFrequency = (chirpEndFrequency - chirpStartFrequency) / (chirpDuration);
-    nextFrequency *= now - chirpStartTime_us;
-    nextFrequency /= US_PER_SECOND;
-    nextFrequency += chirpStartFrequency;
+    float delta = now - sweepStartTime_us;
+    if (delta >= (sweepDuration * US_PER_SECOND)) { frequencyMode = FrequencyMode::Constant; stop(); return; }
+
+
+    float nextFrequency = frequencyMode == FrequencyMode::LinearSweep ? getLinearSweepFrequency(delta) : getLogSweepFrequency(delta);
     
     updateSquareWaveFrequency(nextFrequency);
-    chirpLastUpdate_us = now;
+    sweepLastUpdate_us = now;
 
-    if (now - chirpStartTime_us >= (chirpDuration * US_PER_SECOND)) {
-        frequencyMode = FrequencyMode::Constant;
-        stop();
-    }
+}
+
+float Timer1SignalGenerator::getLinearSweepFrequency(float delta) {
+    float nextFrequency = (sweepEndFrequency - sweepStartFrequency) / (sweepDuration);
+    nextFrequency *= delta;
+    nextFrequency /= US_PER_SECOND;
+    nextFrequency += sweepStartFrequency;
+    return nextFrequency;
+}
+
+float Timer1SignalGenerator::getLogSweepFrequency(float delta) {
+    return sweepStartFrequency * exp(log(sweepEndFrequency / sweepStartFrequency) * delta / (sweepDuration * US_PER_SECOND));
 }
 
 void Timer1SignalGenerator::stop() {

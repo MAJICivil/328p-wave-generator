@@ -15,8 +15,8 @@ void setup() {
   //digitalSignalGen.outputSquareWave(1000000);
   //digitalSignalGen.outputPulseWave(8267, .1);
 
-  digitalSignalGen.linearChirp(500, 100000, 15);
-
+  ///digitalSignalGen.linearSweep(100, 150000, 15);
+  digitalSignalGen.logSweep(150000, 100, 15);
 }
 
 void loop() {

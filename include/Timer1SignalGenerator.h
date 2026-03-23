@@ -10,11 +10,11 @@ class Timer1SignalGenerator {
     FrequencyMode frequencyMode = FrequencyMode::Constant;
     uint16_t timer1Prescale = 0;
 
-    float chirpStartFrequency;
-    float chirpEndFrequency;
-    uint32_t chirpDuration;
-    uint32_t chirpStartTime_us;
-    uint32_t chirpLastUpdate_us;
+    float sweepStartFrequency;
+    float sweepEndFrequency;
+    float sweepDuration;
+    uint32_t sweepStartTime_us;
+    uint32_t sweepLastUpdate_us;
     
     public:
     static constexpr uint8_t OC1A_PIN = 9;
@@ -24,7 +24,7 @@ class Timer1SignalGenerator {
     static constexpr float PULSE_LOWERBOUND_hz = 0.24;
     static constexpr uint32_t TOP_UPPERBOUND = (uint32_t)1 << 16;
     static constexpr uint8_t TOP_LOWERBOUND = 2;
-    static constexpr uint32_t CHIRP_UPDATE_INTERVAL_us = 50;
+    static constexpr uint32_t SWEEP_UPDATE_INTERVAL_us = 50;
 
     
     void initialize();
@@ -33,10 +33,10 @@ class Timer1SignalGenerator {
     void outputSquareWave(float frequency);
     /* Outputs a pulse wave with F_out = frequency and d = dutycycle */
     void outputPulseWave(float frequency, float dutycycle);
-    /* Outputs a square wave frequency linear sweep from startFrequency to endFrequency over time in seconds */
-    void linearChirp(float startFrequency, float endFrequency, float time);
-    /* Outputs a square wave frequency log sweep (f(t) = f0 * e^(ln(f1/f0) * t * 1/T)) from startFrequency to endFrequency over time in seconds */
-    void logChirp(float startFrequency, float endFrequency, float time);
+    /* Outputs a square wave linear sweep from startFrequency to endFrequency over time in seconds */
+    void linearSweep(float startFrequency, float endFrequency, float time);
+    /* Outputs a square wave log sweep (f(t) = f0 * e^(ln(f1/f0) * t * 1/T)) from startFrequency to endFrequency over time in seconds */
+    void logSweep(float startFrequency, float endFrequency, float time);
     /* Must be called frequently when using time variable frequencies */
     void tick();
     void stop();
@@ -63,4 +63,7 @@ class Timer1SignalGenerator {
         float base = (float)F_CPU / (prescale * top);
         return waveform == DigitalWaveForm::Pulse ? base : base / 2; };
     void updateSquareWaveFrequency(float frequency);
+    void setupSweep(float startFrequency, float endFrequency, float duration);
+    float getLinearSweepFrequency(float delta);
+    float getLogSweepFrequency(float delta);
 };

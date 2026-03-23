@@ -15,8 +15,8 @@ enum class AnalogWaveForm {
 
 enum class FrequencyMode {
     Constant,
-    LinearChirp,
-    LogChirp
+    LinearSweep,
+    LogSweep
 };
 
 constexpr uint32_t US_PER_SECOND = 1000000;
