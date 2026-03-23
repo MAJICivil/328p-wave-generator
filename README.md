@@ -3,6 +3,6 @@ This is a for fun embedded system project which implements a digital signal gene
 Current capabilities:  
 -Square wave with variable frequency  
 -Pulse wave with variable frequency and duty cycle  
--Linear sweep
+-Linear sweep  
 -Log sweep
 
